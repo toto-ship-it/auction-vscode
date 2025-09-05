@@ -8,45 +8,19 @@
         "https://picsum.photos/seed/coupe/800/500"
       ],
       "originalPrice": 500000,
-      "currentPrice": 600000,
+      "currentPrice": 500000,
       "status": "Available",
-      "bids": [
-        {
-          "name": "Toto Outanavongsa",
-          "bidderId": "1234",
-          "amount": 600000,
-          "time": 1757041022065
-        }
-      ],
-      "createdAt": 1757038469913,
-      "lastBidder": {
-        "name": "Toto Outanavongsa",
-        "bidderId": "1234"
-      }
-    },
-    {
-      "id": "item-002",
-      "name": "Vintage Coupe",
+   ✅ Synced 6 item(s) from items.xlsx → /Users/totooutanavongsa/Documents/Website/Auction/auction-vscode/db.json
+,
       "description": "Sample demo car item",
       "images": [
         "https://picsum.photos/seed/coupe/800/500"
       ],
       "originalPrice": 1500000,
-      "currentPrice": 1600000,
+      "currentPrice": 1500000,
       "status": "Available",
-      "bids": [
-        {
-          "name": "Olay",
-          "bidderId": "456",
-          "amount": 1600000,
-          "time": 1757041241219
-        }
-      ],
-      "createdAt": 1757038469913,
-      "lastBidder": {
-        "name": "Olay",
-        "bidderId": "456"
-      }
+      "bids": [],
+      "createdAt": 1757061664275
     },
     {
       "id": "item-003",
@@ -60,7 +34,7 @@
       "currentPrice": 800000,
       "status": "Available",
       "bids": [],
-      "createdAt": 1757038469913
+      "createdAt": 1757061664275
     },
     {
       "id": "item-004",
@@ -74,7 +48,7 @@
       "currentPrice": 800000,
       "status": "Hold",
       "bids": [],
-      "createdAt": 1757038469913
+      "createdAt": 1757061664275
     },
     {
       "id": "item-005",
@@ -88,7 +62,7 @@
       "currentPrice": 800000,
       "status": "Available",
       "bids": [],
-      "createdAt": 1757038469913
+      "createdAt": 1757061664275
     },
     {
       "id": "item-006",
@@ -102,7 +76,7 @@
       "currentPrice": 800000,
       "status": "Available",
       "bids": [],
-      "createdAt": 1757038469913
+      "createdAt": 1757061664275
     }
   ]
 }

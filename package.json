@@ -5,18 +5,15 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=18" },
-
   "scripts": {
-    "prestart": "node -e \"const fs=require('fs');if(!fs.existsSync('db.json')){fs.writeFileSync('db.json', JSON.stringify({items:[]},null,2));console.log('Created db.json');}\"",
+    "prestart": "node -e \"const fs=require('fs');if(!fs.existsSync('db.json')){fs.writeFileSync('db.json', JSON.stringify({items:[]}, null, 2));console.log('Created db.json');}\"",
     "start": "node server.js",
     "start:4000": "cross-env PORT=4000 node server.js",
     "dev": "nodemon server.js",
-
     "sync:excel": "node data/sync-from-excel.js",
     "export:excel": "node data/export-to-excel.js",
     "export:watch": "nodemon -e json -w db.json --exec \"node data/export-to-excel.js\""
   },
-
   "dependencies": {
     "express": "^4.19.2",
     "xlsx": "^0.18.5"
