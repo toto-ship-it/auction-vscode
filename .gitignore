@@ -1,0 +1,8 @@
+node_modules/
+data/*-export.xlsx
+data/auction-export.xlsx
+data/*.csv
+.DS_Store
+
+!data/items.xlsx
+# db.json  # uncomment to keep live data private

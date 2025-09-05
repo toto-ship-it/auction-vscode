@@ -1,0 +1,108 @@
+{
+  "items": [
+    {
+      "id": "item-001",
+      "name": "Blue Mug 350ml",
+      "description": "Ceramic mug",
+      "images": [
+        "https://picsum.photos/seed/coupe/800/500"
+      ],
+      "originalPrice": 500000,
+      "currentPrice": 600000,
+      "status": "Available",
+      "bids": [
+        {
+          "name": "Toto Outanavongsa",
+          "bidderId": "1234",
+          "amount": 600000,
+          "time": 1757041022065
+        }
+      ],
+      "createdAt": 1757038469913,
+      "lastBidder": {
+        "name": "Toto Outanavongsa",
+        "bidderId": "1234"
+      }
+    },
+    {
+      "id": "item-002",
+      "name": "Vintage Coupe",
+      "description": "Sample demo car item",
+      "images": [
+        "https://picsum.photos/seed/coupe/800/500"
+      ],
+      "originalPrice": 1500000,
+      "currentPrice": 1600000,
+      "status": "Available",
+      "bids": [
+        {
+          "name": "Olay",
+          "bidderId": "456",
+          "amount": 1600000,
+          "time": 1757041241219
+        }
+      ],
+      "createdAt": 1757038469913,
+      "lastBidder": {
+        "name": "Olay",
+        "bidderId": "456"
+      }
+    },
+    {
+      "id": "item-003",
+      "name": "Mountain Bike",
+      "description": "Well-kept bike, size M",
+      "images": [
+        "https://picsum.photos/seed/bike/800/500",
+        "https://picsum.photos/seed/bike2/800/500"
+      ],
+      "originalPrice": 800000,
+      "currentPrice": 800000,
+      "status": "Available",
+      "bids": [],
+      "createdAt": 1757038469913
+    },
+    {
+      "id": "item-004",
+      "name": "Banana",
+      "description": "1kg",
+      "images": [
+        "https://picsum.photos/seed/bike/800/500",
+        "https://picsum.photos/seed/bike2/800/500"
+      ],
+      "originalPrice": 800000,
+      "currentPrice": 800000,
+      "status": "Hold",
+      "bids": [],
+      "createdAt": 1757038469913
+    },
+    {
+      "id": "item-005",
+      "name": "Mango",
+      "description": "15kg",
+      "images": [
+        "https://picsum.photos/seed/bike/800/500",
+        "https://picsum.photos/seed/bike2/800/500"
+      ],
+      "originalPrice": 800000,
+      "currentPrice": 800000,
+      "status": "Available",
+      "bids": [],
+      "createdAt": 1757038469913
+    },
+    {
+      "id": "item-006",
+      "name": "Mango",
+      "description": "15kg",
+      "images": [
+        "https://picsum.photos/seed/bike/800/500",
+        "https://picsum.photos/seed/bike2/800/500"
+      ],
+      "originalPrice": 800000,
+      "currentPrice": 800000,
+      "status": "Available",
+      "bids": [],
+      "createdAt": 1757038469913
+    }
+  ]
+}

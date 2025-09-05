@@ -1,0 +1,7 @@
+id | name | description | images | originalPrice | currentPrice | status
+item-001 | Blue Mug 350ml | Ceramic mug | https://picsum.photos/seed/coupe/800/500 | 500000 | 500000 | Available
+item-002 | Vintage Coupe | Sample demo car item | https://picsum.photos/seed/coupe/800/500 | 1500000 | 1500000 | Available
+item-003 | Mountain Bike | Well-kept bike, size M | https://picsum.photos/seed/bike/800/500, https://picsum.photos/seed/bike2/800/500 | 800000 | 800000 | Available
+item-004 | Banana | 1kg | https://picsum.photos/seed/bike/800/500, https://picsum.photos/seed/bike2/800/500 | 800000 | 800000 | Hold
+item-005 | Mango | 15kg | https://picsum.photos/seed/bike/800/500, https://picsum.photos/seed/bike2/800/500 | 800000 | 800000 | Available
+item-006 | Mango | 15kg | https://picsum.photos/seed/bike/800/500, https://picsum.photos/seed/bike2/800/500 | 800000 | 800000 | Available
