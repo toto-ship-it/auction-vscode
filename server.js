@@ -10,13 +10,24 @@ import crypto from 'crypto';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
-const DB_PATH  = path.join(__dirname, 'db.json');
+// ✅ allow override via environment variable for deploys
+const DB_PATH  = process.env.DB_PATH || path.join(__dirname, 'db.json');
 const BID_STEP = 100000; // LAK increment per bid
 
 async function loadDB() {
   try {
-    const data = await fs.readFile(DB_PATH, 'utf-8');
-    return JSON.parse(data);
+    const raw = await fs.readFile(DB_PATH, 'utf-8');
+    try {
+      const parsed = JSON.parse(raw);
+      // ensure shape
+      if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.items)) {
+        return { items: [] };
+      }
+      return parsed;
+    } catch {
+      // corrupted JSON → reset to empty
+      return { items: [] };
+    }
   } catch (e) {
     if (e.code === 'ENOENT') {
       const empty = { items: [] };
@@ -26,6 +37,7 @@ async function loadDB() {
     throw e;
   }
 }
+
 async function saveDB(db) {
   await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2));
 }
@@ -60,7 +72,7 @@ app.post('/api/items', async (req, res) => {
     images: imgs,
     originalPrice: Number(originalPrice) || 0,
     currentPrice: Number(originalPrice) || 0,
-    status, // status still exists, but no status API from the web
+    status: status || 'Available',
     bids: [],
     createdAt: Date.now()
   };
