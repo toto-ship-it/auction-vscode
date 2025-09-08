@@ -1,5 +1,5 @@
 // --- Config --------------------------------------------------------------
-/** Toggle add-item from ENV (default: false) */
+// Enable add-item via ENV (default: false)
 const ALLOW_ADD = String(process.env.ALLOW_ADD || '').toLowerCase() === 'true';
 
 import express from 'express';
@@ -11,12 +11,14 @@ import crypto from 'crypto';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
-/** DB path: use ENV on Render (mounted disk), else local db.json */
+// DB path (Render disk via ENV or local file)
 const DB_PATH  = process.env.DB_PATH || path.join(__dirname, 'db.json');
-/** Fixed bid step: 100,000 LAK */
+// Fixed bid step: 100,000 LAK
 const BID_STEP = 100000;
-/** Optional CORS origin, e.g., "https://your-frontend.example" or "*" */
-const ALLOW_ORIGIN = process.env.ALLOW_ORIGIN || '';
+
+// CORS allowlist: "*" or comma-separated origins (e.g., "https://site1,https://site2")
+const RAW_ALLOW = process.env.ALLOW_ORIGIN || process.env.ALLOW_ORIGINS || '*';
+const ALLOW_LIST = RAW_ALLOW.split(',').map(s => s.trim()).filter(Boolean);
 
 
 // --- Small helpers -------------------------------------------------------
@@ -47,7 +49,7 @@ async function saveDB(db) {
 }
 
 function sortByCreatedDesc(items) {
-  return [...items].sort((a, b) => (Number(b.createdAt||0) - Number(a.createdAt||0)));
+  return [...items].sort((a, b) => (Number(b.createdAt || 0) - Number(a.createdAt || 0)));
 }
 
 
@@ -55,16 +57,28 @@ function sortByCreatedDesc(items) {
 const app = express();
 app.use(express.json());
 
-// Optional CORS (only if you set ALLOW_ORIGIN)
-if (ALLOW_ORIGIN) {
-  app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', ALLOW_ORIGIN);
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    if (req.method === 'OPTIONS') return res.sendStatus(204);
-    next();
-  });
-}
+// CORS (supports "*" or a comma-separated allowlist)
+app.use((req, res, next) => {
+  const originHeader = req.headers.origin;
+  let allow = '*';
+
+  if (ALLOW_LIST.includes('*')) {
+    allow = '*';
+  } else if (originHeader && ALLOW_LIST.includes(originHeader)) {
+    allow = originHeader;
+    res.setHeader('Vary', 'Origin'); // cache-safe per origin
+  } else if (ALLOW_LIST.length === 1) {
+    // single fixed origin (no echo)
+    allow = ALLOW_LIST[0];
+  }
+
+  res.setHeader('Access-Control-Allow-Origin', allow);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Max-Age', '600'); // cache preflight for 10m
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
 
 // Serve static UI from /public
 app.use(express.static(path.join(__dirname, 'public')));
@@ -174,13 +188,11 @@ app.get('*', (req, res, next) => {
   res.sendFile(indexPath);
 });
 
-
 // --- Error handler -------------------------------------------------------
 app.use((err, _req, res, _next) => {
   console.error('[server error]', err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
-
 
 // --- Start ---------------------------------------------------------------
 const PORT = process.env.PORT || 3000;
