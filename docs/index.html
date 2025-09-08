@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Auction</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>LDB Auction</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <header class="site-header">
     <h1>LDB Auction</h1>
-    <p>ເປັນການປະມູນເຄື່ອງໃນຮູບແບບການເພີ່ມຂຶ້ນ ເທື່ອລະ LAK <strong>100,000</strong> per click.</p>
+    <p>
+      ລະບົບປະມູນ: ເພີ່ມລາຄາຄັ້ງລະ <strong>100,000 LAK</strong> (per click)
+    </p>
   </header>
 
   <main class="container">
@@ -23,9 +25,17 @@
   </main>
 
   <footer class="site-footer">
-    <small>Items are managed on the backend (edit <code>db.json</code>).</small>
+    <small>Items are managed on the backend (Node/Express + <code>db.json</code>).</small>
   </footer>
 
-  <script src="app.js" type="module"></script>
+  <!-- Inject your Render API base BEFORE app.js -->
+  <script>
+    // Public API base hosted on Render (CORS allowed for GitHub Pages)
+    window.API_BASE = 'https://auction-vscode.onrender.com';
+  </script>
+
+  <!-- Your app code (uses window.API_BASE inside app.js) -->
+  <script src="./app.js" type="module"></script>
+  <noscript>Please enable JavaScript to use this site.</noscript>
 </body>
 </html>
