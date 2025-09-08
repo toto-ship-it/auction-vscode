@@ -8,6 +8,7 @@ const refreshBtn = document.getElementById('refresh');
 // Utils
 const LAK = (n) => `₭ ${Number(n || 0).toLocaleString('en-US')}`;
 const TIMEOUT_MS = 90000; // 90s for Render cold-starts
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function fetchJSON(path, options = {}) {
   const controller = new AbortController();
@@ -18,10 +19,22 @@ async function fetchJSON(path, options = {}) {
       ...options,
       signal: controller.signal
     });
-    const data = await res.json().catch(() => null);
+
+    // Try to parse JSON; if not JSON, fall back to text
+    let data = null;
+    const ct = res.headers.get('content-type') || '';
+    if (ct.includes('application/json')) {
+      data = await res.json().catch(() => null);
+    } else {
+      const txt = await res.text().catch(() => '');
+      data = txt ? { message: txt } : null;
+    }
+
     if (!res.ok) {
       const msg = (data && (data.error || data.message)) || `HTTP ${res.status}`;
-      throw new Error(msg);
+      const err = new Error(msg);
+      err.status = res.status;                 // allow retry logic to see status
+      throw err;
     }
     return data;
   } finally {
@@ -90,7 +103,7 @@ function renderCard(item) {
             <input type="text" class="bidder-name" placeholder="Your name" />
           </label>
 
-          <button class="btn bid" ${item.status !== 'Available' ? 'disabled' : ''}>Bid +100,000</button>
+        <button class="btn bid" ${item.status !== 'Available' ? 'disabled' : ''}>Bid +100,000</button>
         </div>
 
         <div class="meta">
@@ -149,15 +162,40 @@ function attachCardHandlers() {
   });
 }
 
+// ===== Retry helpers (cold start & transient errors) =====
+function isTransient(err) {
+  const msg = String(err?.message || '').toLowerCase();
+  return err?.name === 'AbortError'
+      || [429, 502, 503, 504].includes(err?.status)
+      || /abort|timeout|network/.test(msg);
+}
+
+async function fetchWithRetry(path, options = {}, retries = 3, delayMs = 2000) {
+  try {
+    return await fetchJSON(path, options);
+  } catch (e) {
+    if (retries > 0 && isTransient(e)) {
+      await sleep(delayMs);
+      return fetchWithRetry(path, options, retries - 1, Math.min(delayMs * 1.5, 10000));
+    }
+    throw e;
+  }
+}
+
 // ===== Page boot =====
 async function load() {
   try {
     refreshBtn.disabled = true;
     refreshBtn.textContent = 'Loading...';
-    const items = await fetchWithRetry("/api/items", {}, 1);
+
+    // Pre-warm the API (helps free tier cold starts)
+    await fetch(`${API_BASE}/health`, { cache: 'no-store' }).catch(() => {});
+
+    // Try up to 3 times to fetch items
+    const items = await fetchWithRetry('/api/items', {}, 3);
     renderItems(items);
   } catch (e) {
-    console.error(e);
+    console.error('Load failed:', e);
     itemsEl.innerHTML = `<p class="error">Cannot load items: ${e.message || 'Network error'}</p>`;
   } finally {
     refreshBtn.disabled = false;
@@ -167,19 +205,3 @@ async function load() {
 
 refreshBtn?.addEventListener('click', load);
 load();
-
-// Retry helper for Render cold start
-function isAbortLike(err) {
-  return err?.name === 'AbortError' || /abort|timeout|network/i.test(String(err?.message || ''));
-}
-async function fetchWithRetry(path, options = {}, retries = 1, delayMs = 2500) {
-  try {
-    return await fetchJSON(path, options);
-  } catch (e) {
-    if (retries > 0 && isAbortLike(e)) {
-      await new Promise(r => setTimeout(r, delayMs));
-      return fetchWithRetry(path, options, retries - 1, delayMs * 1.5);
-    }
-    throw e;
-  }
-}
