@@ -7,7 +7,7 @@ const refreshBtn = document.getElementById('refresh');
 
 // Utils
 const LAK = (n) => `₭ ${Number(n || 0).toLocaleString('en-US')}`;
-const TIMEOUT_MS = 30000; // cope with Render cold-starts
+const TIMEOUT_MS = 90000; // 90s for Render cold-starts
 
 async function fetchJSON(path, options = {}) {
   const controller = new AbortController();
@@ -154,7 +154,7 @@ async function load() {
   try {
     refreshBtn.disabled = true;
     refreshBtn.textContent = 'Loading...';
-    const items = await fetchItems();
+    const items = await fetchWithRetry("/api/items", {}, 1);
     renderItems(items);
   } catch (e) {
     console.error(e);
@@ -167,3 +167,19 @@ async function load() {
 
 refreshBtn?.addEventListener('click', load);
 load();
+
+// Retry helper for Render cold start
+function isAbortLike(err) {
+  return err?.name === 'AbortError' || /abort|timeout|network/i.test(String(err?.message || ''));
+}
+async function fetchWithRetry(path, options = {}, retries = 1, delayMs = 2500) {
+  try {
+    return await fetchJSON(path, options);
+  } catch (e) {
+    if (retries > 0 && isAbortLike(e)) {
+      await new Promise(r => setTimeout(r, delayMs));
+      return fetchWithRetry(path, options, retries - 1, delayMs * 1.5);
+    }
+    throw e;
+  }
+}
